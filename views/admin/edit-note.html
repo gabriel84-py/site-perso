@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+
+{% block title %}{% if note %}Éditer{% else %}Nouvelle{% endif %} Note{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="hero" style="padding: 3rem 0;">
+        <h1 style="font-size: 3rem;">{% if note %}✏️ Éditer la note{% else %}➕ Nouvelle note{% endif %}</h1>
+    </div>
+
+    <nav class="admin-nav">
+        <ul>
+            <li><a href="/admin">Dashboard</a></li>
+            <li><a href="/notes">Notes</a></li>
+            <li><a href="/admin/notes/new" class="active">Éditer</a></li>
+        </ul>
+    </nav>
+
+    <div style="max-width: 900px; margin: 0 auto;">
+        <form method="POST" action="/admin/notes">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+            {% if note %}
+            <input type="hidden" name="id" value="{{ note.id }}">
+            {% endif %}
+
+            <div class="form-group">
+                <label for="title">Titre *</label>
+                <input type="text" id="title" name="title" class="form-control" 
+                       value="{{ note.title if note else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="content">Contenu *</label>
+                <textarea id="content" name="content" class="form-control" 
+                          style="min-height: 500px;" 
+                          required>{{ note.content if note else '' }}</textarea>
+                <small style="color: var(--text-muted);">Supporte le Markdown</small>
+            </div>
+
+            <div class="form-group">
+                <label for="tags">Tags (séparés par des virgules)</label>
+                <input type="text" id="tags" name="tags" class="form-control" 
+                       value="{{ note.tags if note else '' }}"
+                       placeholder="todo, idée, recherche">
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary">
+                    💾 {% if note %}Mettre à jour{% else %}Créer{% endif %}
+                </button>
+                <a href="/notes" class="btn btn-secondary">Annuler</a>
+                {% if note %}
+                <form method="POST" action="/admin/notes/{{ note.id }}/delete" style="margin-left: auto;">
+                    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+                    <button type="submit" class="btn btn-danger" 
+                            onclick="return confirm('Supprimer cette note ?')">
+                        🗑️ Supprimer
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </form>
+
+        {% if note %}
+        <div style="margin-top: 3rem; padding: 2rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);">
+            <h3 style="margin-bottom: 1rem;">👁️ Aperçu</h3>
+            <div class="article-content">
+                {{ note.content | markdown | safe }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

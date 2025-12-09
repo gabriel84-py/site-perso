@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mon Site{% endblock %}</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/" class="logo">CyberSite</a>
+            <ul class="nav-links">
+                <li><a href="/" class="{% if currentPath == '/' %}active{% endif %}">Accueil</a></li>
+                <li><a href="/blog" class="{% if currentPath.startswith('/blog') %}active{% endif %}">Blog</a></li>
+                <li><a href="/code" class="{% if currentPath.startswith('/code') %}active{% endif %}">Code</a></li>
+                <li><a href="/about" class="{% if currentPath == '/about' %}active{% endif %}">À propos</a></li>
+                {% if isAuthenticated %}
+                <li><a href="/notes" class="{% if currentPath == '/notes' %}active{% endif %}">Notes</a></li>
+                <li><a href="/admin" class="{% if currentPath.startswith('/admin') %}active{% endif %}">Admin</a></li>
+                <li><a href="/logout">Déconnexion</a></li>
+                {% else %}
+                <li><a href="/login">Connexion</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>&copy; {{ "now" | date("Y") }} - Site personnel de cyber offensive</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="/js/main.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

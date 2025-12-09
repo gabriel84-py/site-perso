@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="hero" style="padding: 3rem 0;">
+        <h1 style="font-size: 3rem;">⚡ Dashboard</h1>
+        <p style="font-size: 1.25rem;">Gérez votre contenu</p>
+    </div>
+
+    <nav class="admin-nav">
+        <ul>
+            <li><a href="/admin" class="active">Dashboard</a></li>
+            <li><a href="/admin/blog/new">Nouvel article</a></li>
+            <li><a href="/admin/code/new">Nouveau code</a></li>
+            <li><a href="/admin/notes/new">Nouvelle note</a></li>
+        </ul>
+    </nav>
+
+    <div class="admin-stats">
+        <div class="stat-card">
+            <h3>{{ posts|length }}</h3>
+            <p>Articles de blog</p>
+        </div>
+        <div class="stat-card" style="background: linear-gradient(135deg, var(--accent), var(--secondary));">
+            <h3>{{ snippets|length }}</h3>
+            <p>Snippets de code</p>
+        </div>
+        <div class="stat-card" style="background: linear-gradient(135deg, var(--success), var(--primary));">
+            <h3>{{ notes|length }}</h3>
+            <p>Notes privées</p>
+        </div>
+    </div>
+
+    <section style="margin-top: 3rem;">
+        <h2 style="font-size: 2rem; margin-bottom: 1.5rem;">📝 Derniers articles</h2>
+        {% if posts|length > 0 %}
+        <div class="grid">
+            {% for post in posts %}
+            <div class="card">
+                <h3>{{ post.title }}</h3>
+                <p>{{ post.excerpt or (post.content | truncate(100)) }}</p>
+                <div class="card-meta">
+                    <span>{{ post.created_at | date }}</span>
+                    <span>{% if post.published %}✅ Publié{% else %}⏸️ Brouillon{% endif %}</span>
+                </div>
+                <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                    <a href="/admin/blog/{{ post.id }}" class="btn btn-secondary" style="padding: 0.5rem 1rem;">✏️ Éditer</a>
+                    <a href="/blog/{{ post.slug }}" class="btn btn-secondary" style="padding: 0.5rem 1rem;">👁️ Voir</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="color: var(--text-muted);">Aucun article pour le moment</p>
+        {% endif %}
+    </section>
+
+    <section style="margin-top: 3rem;">
+        <h2 style="font-size: 2rem; margin-bottom: 1.5rem;">💻 Code récent</h2>
+        {% if snippets|length > 0 %}
+        <div class="grid">
+            {% for snippet in snippets %}
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <h3 style="margin: 0;">{{ snippet.title }}</h3>
+                    {% if snippet.language %}
+                    <span class="language-badge">{{ snippet.language }}</span>
+                    {% endif %}
+                </div>
+                <p style="margin-top: 1rem;">{{ snippet.description or (snippet.code | truncate(80)) }}</p>
+                <div class="card-meta">
+                    <span>{{ snippet.created_at | date }}</span>
+                    <span>{% if snippet.published %}✅ Publié{% else %}⏸️ Brouillon{% endif %}</span>
+                </div>
+                <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                    <a href="/admin/code/{{ snippet.id }}" class="btn btn-secondary" style="padding: 0.5rem 1rem;">✏️ Éditer</a>
+                    <a href="/code/{{ snippet.slug }}" class="btn btn-secondary" style="padding: 0.5rem 1rem;">👁️ Voir</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="color: var(--text-muted);">Aucun code pour le moment</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
